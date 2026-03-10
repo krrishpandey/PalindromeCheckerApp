@@ -1,34 +1,46 @@
+import java.util.Stack;
+
 public class PalindromeChecker {
 
-    // Function to check palindrome
-    public static boolean isPalindrome(String text) {
+    // Private variable to hold the string
+    private String text;
 
-        // Normalize string: remove non-alphanumeric characters & convert to lowercase
-        String normalized = text.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-
-        int start = 0;
-        int end = normalized.length() - 1;
-
-        // Two-pointer comparison
-        while (start < end) {
-            if (normalized.charAt(start) != normalized.charAt(end)) {
-                return false;
-            }
-            start++;
-            end--;
-        }
-
-        return true;
+    // Constructor
+    public PalindromeChecker(String text) {
+        this.text = text;
     }
 
+    // Public method to check palindrome
+    public boolean checkPalindrome() {
+
+        // Use Stack internally to reverse characters
+        Stack<Character> stack = new Stack<>();
+
+        for (int i = 0; i < text.length(); i++) {
+            stack.push(text.charAt(i));
+        }
+
+        String reversed = "";
+        while (!stack.isEmpty()) {
+            reversed += stack.pop();
+        }
+
+        return text.equals(reversed);
+    }
+
+    // Main method to demonstrate usage
     public static void main(String[] args) {
 
-        String text = "A man a plan a canal Panama";
+        String input = "level";
 
-        if (isPalindrome(text)) {
-            System.out.println("The string \"" + text + "\" is a Palindrome (ignoring spaces and case).");
+        // Create an instance of PalindromeChecker
+        PalindromeChecker checker = new PalindromeChecker(input);
+
+        // Call the encapsulated method
+        if (checker.checkPalindrome()) {
+            System.out.println("The string \"" + input + "\" is a Palindrome.");
         } else {
-            System.out.println("The string \"" + text + "\" is NOT a Palindrome.");
+            System.out.println("The string \"" + input + "\" is NOT a Palindrome.");
         }
     }
 }
