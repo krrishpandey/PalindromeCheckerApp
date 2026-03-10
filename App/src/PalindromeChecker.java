@@ -1,23 +1,20 @@
 import java.util.Stack;
+import java.util.Deque;
+import java.util.LinkedList;
 
-public class PalindromeChecker {
+// 1. Strategy Interface
+interface PalindromeStrategy {
+    boolean check(String text);
+}
 
-    // Private variable to hold the string
-    private String text;
+// 2. Concrete Strategy – Stack
+class StackStrategy implements PalindromeStrategy {
 
-    // Constructor
-    public PalindromeChecker(String text) {
-        this.text = text;
-    }
-
-    // Public method to check palindrome
-    public boolean checkPalindrome() {
-
-        // Use Stack internally to reverse characters
+    @Override
+    public boolean check(String text) {
         Stack<Character> stack = new Stack<>();
-
-        for (int i = 0; i < text.length(); i++) {
-            stack.push(text.charAt(i));
+        for (char ch : text.toCharArray()) {
+            stack.push(ch);
         }
 
         String reversed = "";
@@ -27,20 +24,62 @@ public class PalindromeChecker {
 
         return text.equals(reversed);
     }
+}
 
-    // Main method to demonstrate usage
+// 3. Concrete Strategy – Deque
+class DequeStrategy implements PalindromeStrategy {
+
+    @Override
+    public boolean check(String text) {
+        Deque<Character> deque = new LinkedList<>();
+        for (char ch : text.toCharArray()) {
+            deque.addLast(ch);
+        }
+
+        while (deque.size() > 1) {
+            if (deque.removeFirst() != deque.removeLast()) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+// 4. Context Class
+class PalindromeContext {
+
+    private PalindromeStrategy strategy;
+
+    // Inject strategy at runtime
+    public PalindromeContext(PalindromeStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public boolean executeStrategy(String text) {
+        return strategy.check(text);
+    }
+
+    // Optionally allow strategy switching at runtime
+    public void setStrategy(PalindromeStrategy strategy) {
+        this.strategy = strategy;
+    }
+}
+
+// 5. Main class to demonstrate
+public class PalindromeChecker {
+
     public static void main(String[] args) {
 
-        String input = "level";
+        String text = "radar";
 
-        // Create an instance of PalindromeChecker
-        PalindromeChecker checker = new PalindromeChecker(input);
+        // Use Stack Strategy
+        PalindromeContext context = new PalindromeContext(new StackStrategy());
+        System.out.println("Using Stack Strategy: " +
+                (context.executeStrategy(text) ? "Palindrome" : "Not Palindrome"));
 
-        // Call the encapsulated method
-        if (checker.checkPalindrome()) {
-            System.out.println("The string \"" + input + "\" is a Palindrome.");
-        } else {
-            System.out.println("The string \"" + input + "\" is NOT a Palindrome.");
-        }
+        // Switch to Deque Strategy dynamically
+        context.setStrategy(new DequeStrategy());
+        System.out.println("Using Deque Strategy: " +
+                (context.executeStrategy(text) ? "Palindrome" : "Not Palindrome"));
     }
 }
