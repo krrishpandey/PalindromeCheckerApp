@@ -1,29 +1,32 @@
 public class PalindromeChecker {
 
-    // Recursive function to check palindrome
-    public static boolean isPalindrome(String text, int start, int end) {
+    // Function to check palindrome
+    public static boolean isPalindrome(String text) {
 
-        // Base condition
-        if (start >= end) {
-            return true;
+        // Normalize string: remove non-alphanumeric characters & convert to lowercase
+        String normalized = text.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+
+        int start = 0;
+        int end = normalized.length() - 1;
+
+        // Two-pointer comparison
+        while (start < end) {
+            if (normalized.charAt(start) != normalized.charAt(end)) {
+                return false;
+            }
+            start++;
+            end--;
         }
 
-        // Compare characters
-        if (text.charAt(start) != text.charAt(end)) {
-            return false;
-        }
-
-        // Recursive call
-        return isPalindrome(text, start + 1, end - 1);
+        return true;
     }
 
     public static void main(String[] args) {
 
-        String text = "madam";
+        String text = "A man a plan a canal Panama";
 
-        // Call recursive function
-        if (isPalindrome(text, 0, text.length() - 1)) {
-            System.out.println("The string \"" + text + "\" is a Palindrome.");
+        if (isPalindrome(text)) {
+            System.out.println("The string \"" + text + "\" is a Palindrome (ignoring spaces and case).");
         } else {
             System.out.println("The string \"" + text + "\" is NOT a Palindrome.");
         }
